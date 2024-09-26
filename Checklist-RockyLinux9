@@ -1,0 +1,21 @@
+yum update -y 
+yum upgrade -y
+
+dnf -y install epel-release
+
+yum update -y 
+yum install glibc-langpack-en glibc-langpack-pt git vim wget net-tools htop iftop iotop nload nmon nethogs ntfs-3g  sshfs parted net-tools ethtool -y
+
+echo 'LANG="pt_BR.utf8"' > /etc/locale.conf 
+
+
+
+#desativa SELINUX
+sed -i 's/enforcing/disabled/g' /etc/selinux/config
+
+#Desativa segurança
+setenforce 0
+systemctl stop firewalld ; systemctl disable firewalld
+
+dnf install qemu-guest-agent -y
+systemctl enable --now  qemu-guest-agent 
