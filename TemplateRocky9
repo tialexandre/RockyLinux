@@ -53,4 +53,8 @@ echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
 
 sudo systemctl restart php-fpm
 
-
+#Instalar MySQL
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+sudo dnf install -y mysql-community-server
+sudo systemctl enable --now mysqld
