@@ -42,7 +42,7 @@ sudo dnf install -y php php-bz2 php-calendar php-cli php-ctype php-curl php-date
 php-fileinfo php-filter php-ftp php-gd php-gettext php-hash php-iconv php-imap php-intl php-json php-libxml \
 php-mbstring php-mysqli php-mysqlnd php-openssl php-pcntl php-pcre php-pear php-pdo php-pdo_mysql \
 php-pdo_sqlite php-readline php-session php-sockets php-sqlite3 php-tokenizer php-xml php-xmlreader \
-php-xmlwriter php-xsl php-zip php-zlib
+php-xmlwriter php-xsl php-zip php-zlib php-mcrypt php-mysqlnd
 
 
 no "n" | sudo pecl install apcu
