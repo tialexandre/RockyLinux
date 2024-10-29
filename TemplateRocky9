@@ -48,7 +48,7 @@ php-xmlwriter php-xsl php-zip php-zlib php-mcrypt php-mysqlnd
 no "n" | sudo pecl install apcu
 sudo pecl install simdjson
 sudo dnf install -y php-jsonlint.noarch php${Versao}-php-gd php${Versao}-php-zip php${Versao}-php-pecl-imagick-im7.x86_64 php-jsonlint.noarch php${Versao}-php-gd php${Versao}-php-zip  
-sudo dnf install -y php-xmlrpc
+sudo dnf install -y php${Versao}*-*xmlrpc*
 echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
 
 sudo systemctl restart php-fpm
