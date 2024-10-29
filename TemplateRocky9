@@ -102,23 +102,25 @@ sudo systemctl restart php-fpm
 sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
 sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
 sudo dnf install -y mysql-community-server
+echo "skip-grant-tables" >> /etc/my.cnf
 sudo systemctl enable --now mysqld
+
 
 #Configura SQL
 NEW_ROOT_PASSWORD="1QF*Mgcsx&Mt@#" 
 DB_MYSQL="wpcreamy"
-USER_MYSQL=wpcreamy
-PASS_MYSQL=kv7AfEzX5AVhF
+USER_MYSQL="wpcreamy"
+PASS_MYSQL="kv7AfEzX5AVhF"
 
 # Extrair a senha temporária do usuário root
 ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}')
 
 # Definir uma nova senha segura para o usuário root
 echo $NEW_ROOT_PASSWORD > /root/mysqlpass.txt
-mysql --connect-expired-password -u root -p"$ROOT_PASSWORD" <<EOF
+mysql --connect-expired-password -u root -p "$ROOT_PASSWORD" <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$NEW_ROOT_PASSWORD';
-
-#Cria DB
+EOF
+mysql -u root -p "$PASS_MYSQL" << EOF
 CREATE DATABASE ${DB_MYSQL};
 CREATE USER '${USER_MYSQL}'@'%' IDENTIFIED BY '${PASS_MYSQL}'; 
 GRANT ALL PRIVILEGES ON wordpress.* TO '${USER_MYSQL}'@'%';
