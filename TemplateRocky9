@@ -1,0 +1,12 @@
+pvcreate /dev/sdb
+vgcreate -n data /dev/sdb
+lvcreate -n mysql -L 20G data
+lvcreate -n vhosts -l  data   #(tamanho total disponivel de vgdisplay data)
+mkfs.xfs /dev/data/vhosts
+mkfs.xfs /dev/data/mysql
+
+mkdir -p /var/www/vhosts
+mkdir -p /var/lib/mysql
+
+echo "/dev/data/vhosts				/var/www/vhosts		xfs	defaults	0 0" >> /etc/fatab
+echo "/dev/data/mysql				/var/lib/mysql		xfs	defaults	0 0" >> /etc/fatab
