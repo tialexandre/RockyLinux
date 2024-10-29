@@ -45,7 +45,7 @@ php-pdo_sqlite php-readline php-session php-sockets php-sqlite3 php-tokenizer ph
 php-xmlwriter php-xsl php-zip php-zlib
 
 
-sudo pecl install apcu
+no "n" | sudo pecl install apcu
 echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
 
 
