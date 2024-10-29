@@ -219,6 +219,7 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/pki/tls/lo
 #--------------------------------------
 # Configurar Nginx para o WordPress
 #--------------------------------------
+mkdir /etc/nginx/vhost.d
 cat > /etc/nginx/conf.d/realip.conf <<EOF
 #Local
 set_real_ip_from 127.0.0.1;
@@ -273,5 +274,172 @@ upstream ${site}{
         server unix:/var/www/system/php/${site}.sock;
 }
 EOF
+
+
+
+# config nginx 
+cat > /etc/nginx/nginx.conf <<EOF
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+worker_rlimit_nofile 204800;
+
+# Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections  65535;
+    multi_accept on;
+    use epoll;
+}
+
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    server_tokens off;
+    charset UTF-8;
+    client_header_buffer_size 32k;
+    large_client_header_buffers 4 32k;
+    client_header_timeout 100;
+    client_body_timeout 100;
+    client_max_body_size 800m;
+    client_body_buffer_size 512k;
+    reset_timedout_connection on;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 75 20;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/vhost.d/*.conf;
+}
+EOF
+
+cat > /etc/nginx/vhost.d/001-${site}.conf << EOF
+server {
+	listen *:80;
+	server_name ${site} www.${site};
+
+	root /var/www/vhosts/${site}/htdocs;
+
+	return 301 https://${site}$request_uri;
+	location ~* ^.+\.(css|js|jpg|jpeg|gif|png|ico|gz|svg|svgz|ttf|otf|woff|woff2|eot|mp4|ogg|ogv|webm|webp|zip|swf|map)$ {
+		aio threads;
+		# Tenta servir arquivos estáticos e retorna 404 se não encontrado
+		try_files $uri $uri/ =404;
+	}
+
+
+	location ^~ /wp-content/cache/ {
+		# Desabilita o processamento de PHP nesta localização
+		location ~* \.php$ { return 403; }
+
+     		aio threads;
+		# Adiciona cabeçalhos para cache avançado
+		#expires $expires;
+
+		# Tenta servir arquivos estáticos e retorna 404 se não encontrado
+		try_files $uri $uri/ =404;
+	}
+
+	etag off;
+
+	location / {
+	        rewrite ^(/wp-content/uploads/)(.*)$ https://${site}/wp-content/uploads/$2 permanent;
+	        index  index.html index.htm index.php;
+	        try_files $uri $uri/ /index.php?$args;
+	}
+	location ~ \.php$ {
+	        expires        -1d;
+	        fastcgi_pass   ${site};
+	        fastcgi_index  index.php;
+	        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+	        include        fastcgi_params;
+	        fastcgi_param  PHP_VALUE "default_charset=utf-8";
+	}
+
+	access_log /var/log/nginx/${site}-access.log;
+	error_log /var/log/nginx/${site}-error.log;
+}
+
+server {
+	listen *:443 ssl;
+	server_name ${site} www.${site};
+
+	#ssl_certificate      /etc/pki/tls/${site}.crt;
+	#ssl_certificate_key  /etc/pki/tls/${site}.key;
+
+	keepalive_timeout  65;
+	root /var/www/vhosts/${site}/htdocs;
+	etag off;
+
+	# Custom Nimbus
+	sendfile       on;
+	tcp_nopush     on;
+	tcp_nodelay    on;
+	proxy_ignore_client_abort on;
+	client_max_body_size 100m;
+	include wordpress.d/*.conf;
+	location ~* ^.+\.(css|js|jpg|jpeg|gif|png|ico|gz|svg|svgz|ttf|otf|woff|woff2|eot|mp4|ogg|ogv|webm|webp|zip|swf|map)$ {
+		aio threads;
+		# Tenta servir arquivos estáticos e retorna 404 se não encontrado
+		try_files $uri $uri/ =404;
+	}
+
+
+	location ^~ /wp-content/cache/min/ {
+		# Desabilita o processamento de PHP nesta localização
+		location ~* \.php$ { return 403; }
+
+	     	aio threads;
+		# Adiciona cabeçalhos para cache avançado
+		#expires $expires;
+	
+		# Tenta servir arquivos estáticos e retorna 404 se não encontrado
+		try_files $uri $uri/ =404;
+	}
+
+	location / {
+	        rewrite ^(/wp-content/uploads/)(.*)$ https://${site}/wp-content/uploads/$2 permanent;
+	        index  index.html index.htm index.php;
+	        try_files $uri $uri/ /index.php?$args;
+	}
+
+	location ~ \.php$ {
+	        expires        -1d;
+	        fastcgi_pass   ${site};
+	        fastcgi_index  index.php;
+	        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+	        include        fastcgi_params;
+	        fastcgi_param  PHP_VALUE "default_charset=utf-8";
+	}
+
+	access_log /var/log/nginx/${site}-access.log;
+	error_log /var/log/nginx/${site}-error.log;
+}
+EOF
+
+
+
+
+
 
 
