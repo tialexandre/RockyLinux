@@ -43,10 +43,9 @@ php-fileinfo php-filter php-ftp php-gd php-gettext php-hash php-iconv php-imap p
 php-mbstring php-mysqli php-mysqlnd php-openssl php-pcntl php-pcre php-pear php-pdo php-pdo_mysql \
 php-pdo_sqlite php-readline php-session php-sockets php-sqlite3 php-tokenizer php-xml php-xmlreader \
 php-xmlwriter php-xsl php-zip php-zlib php-mcrypt php-mysqlnd
-
-
 no "n" | sudo pecl install apcu
 echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
 
+sudo systemctl restart php-fpm
 
 
