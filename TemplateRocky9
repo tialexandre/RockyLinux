@@ -33,17 +33,20 @@ systemctl stop firewalld ; systemctl disable firewalld
 dnf install qemu-guest-agent -y
 systemctl enable --now  qemu-guest-agent 
 
-#Instalar PHP84
+#Instalar PHP83
 sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 sudo dnf module reset php -y
-sudo dnf module enable php:remi-8.4 -y
-# Instalar o PHP 8.4 e os módulos especificados
+sudo dnf module enable php:remi-8.3 -y
+# Instalar o PHP 8.3 e os módulos especificados
+Versao=83
 sudo dnf install -y php php-bz2 php-calendar php-cli php-ctype php-curl php-date php-devel php-dom php-exif \
 php-fileinfo php-filter php-ftp php-gd php-gettext php-hash php-iconv php-imap php-intl php-json php-libxml \
 php-mbstring php-mysqli php-mysqlnd php-openssl php-pcntl php-pcre php-pear php-pdo php-pdo_mysql \
 php-pdo_sqlite php-readline php-session php-sockets php-sqlite3 php-tokenizer php-xml php-xmlreader \
 php-xmlwriter php-xsl php-zip php-zlib php-mcrypt php-mysqlnd
 no "n" | sudo pecl install apcu
+sudo pecl install simdjson
+sudo dnf install -y sudo dnf install php-jsonlint.noarch php${Versao}-php-gd php${Versao}-php-zip php${Versao}-php-imagemagick php${Versao}-php-*
 echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
 
 sudo systemctl restart php-fpm
