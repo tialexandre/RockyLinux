@@ -42,7 +42,7 @@ Versao=83
 VRemi="8.3"
 sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 sudo dnf module reset php -y
-sudo dnf module enable php:remi-${VRemi}-y
+sudo dnf module enable php:remi-${VRemi} -y
 # Instalar o PHP 8.3 e os módulos especificados
 sudo dnf install -y php
 sudo dnf install -y php-bz2
