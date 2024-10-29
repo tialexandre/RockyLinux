@@ -51,10 +51,6 @@ sudo dnf install -y php-jsonlint.noarch php${Versao}-php-gd php${Versao}-php-zip
 sudo dnf install -y php-xmlrpc
 echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
 
-json_post
-simdjson
-xmlrpc
-
 sudo systemctl restart php-fpm
 
 
