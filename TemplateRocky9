@@ -33,6 +33,10 @@ systemctl stop firewalld ; systemctl disable firewalld
 dnf install qemu-guest-agent -y
 systemctl enable --now  qemu-guest-agent 
 
+#Instala Nginx 
+sudo dnf -y install nginx
+sudo systemctl enable --now nginx
+
 #Instalar PHP83
 Versao=83
 VRemi="8.3"
@@ -95,7 +99,14 @@ sudo dnf install -y php${Versao}*-*xmlrpc*
 no "n" | sudo pecl install apcu
 sudo pecl install simdjson
 echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
+sudo systemctl enable --now php-fpm
 
+# Configurar PHP-FPM para Nginx
+sudo sed -i 's/listen = .*/listen = \/run\/php-fpm\/www.sock/' /etc/php-fpm.d/www.conf
+sudo sed -i 's/;listen.owner = nobody/listen.owner = nginx/' /etc/php-fpm.d/www.conf
+sudo sed -i 's/;listen.group = nobody/listen.group = nginx/' /etc/php-fpm.d/www.conf
+sudo sed -i 's/user = apache/user = nginx/' /etc/php-fpm.d/www.conf
+sudo sed -i 's/group = apache/group = nginx/' /etc/php-fpm.d/www.conf
 sudo systemctl restart php-fpm
 
 #Instalar MySQL
@@ -120,14 +131,15 @@ echo $NEW_ROOT_PASSWORD > /root/mysqlpass.txt
 mysql --connect-expired-password -u root -p "$ROOT_PASSWORD" <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$NEW_ROOT_PASSWORD';
 EOF
-mysql -u root -p <<EOF
-$(cat <<SQL
-CREATE DATABASE ${DB_MYSQL};
-CREATE USER '${USER_MYSQL}'@'%' IDENTIFIED BY '${PASS_MYSQL}'; 
-GRANT ALL PRIVILEGES ON ${DB_MYSQL}.* TO '${USER_MYSQL}'@'%';
-FLUSH PRIVILEGES;
-EXIT
-)
+# Configurar o banco de dados para o WordPress
+DB_NAME="wordpress_db"
+DB_USER="wordpress_user"
+DB_PASS="strong_password_here"
+
+sudo mysql -e "CREATE DATABASE ${DB_NAME};"
+sudo mysql -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost';"
+sudo mysql -e "FLUSH PRIVILEGES;"
 EOF
 
 
