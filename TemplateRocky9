@@ -69,18 +69,9 @@ sudo dnf install -y php${Versao}-php*imagick-im7*
 sudo dnf install -y php${Versao}-php-gd 
 sudo dnf install -y php${Versao}-php-zip  
 sudo dnf install -y php${Versao}*-*xmlrpc*
-no "n" | sudo pecl install apcu
-sudo pecl install simdjson
-echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
-sudo systemctl enable --now php-fpm
-
-# Configurar PHP-FPM para Nginx
-sudo sed -i 's/listen = .*/listen = \/run\/php-fpm\/www.sock/' /etc/php-fpm.d/www.conf
-sudo sed -i 's/;listen.owner = nobody/listen.owner = nginx/' /etc/php-fpm.d/www.conf
-sudo sed -i 's/;listen.group = nobody/listen.group = nginx/' /etc/php-fpm.d/www.conf
-sudo sed -i 's/user = apache/user = nginx/' /etc/php-fpm.d/www.conf
-sudo sed -i 's/group = apache/group = nginx/' /etc/php-fpm.d/www.conf
-sudo systemctl restart php-fpm
+sudo dnf install -y php${Versao}-php-pecl-apcu
+sudo dnf install -y php${Versao}-php-pecl-simdjson
+sudo systemctl enable --now php83-php-fpm
 
 #Instalar MySQL
 sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
