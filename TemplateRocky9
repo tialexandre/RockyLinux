@@ -436,7 +436,11 @@ server {
 	error_log /var/log/nginx/${site}-error.log;
 }
 EOF
-sudo useradd -m -d /var/www/vhosts/blog.skelt.com.br blogskelt
+
+
+usermod -a -G apache nginx
+
+sudo useradd -m -d /var/www/vhosts/blog.skelt.com.br -g apache blogskelt
 cd /var/www/vhosts/blog.skelt.com.br
 chown blogskelt: -R * # Deixe o Apache/nginx como proprietário
 chmod 750 /var/www/vhosts/blog.skelt.com.br 
@@ -444,7 +448,7 @@ find . -type d -exec chmod 755 {} \; # Altere as permissões dos diretórios par
 find . -type f -exec chmod 644 {} \; # Altere as permissões dos arquivos para rw-r--r--
 
 
-sudo useradd -m -d /var/www/vhosts/blog.creamy.com.br blogcreamy
+sudo useradd -m -d /var/www/vhosts/blog.creamy.com.br -g apache blogcreamy
 cd /var/www/vhosts/blog.creamy.com.br
 chown blogcreamy: -R * # Deixe o Apache/nginx como proprietário
 chmod 750 /var/www/vhosts/blog.creamy.com.br 
