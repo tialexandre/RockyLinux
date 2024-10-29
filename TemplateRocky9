@@ -206,6 +206,18 @@ done
 #-------------------------------------
 # Configurar Nginx para o WordPress
 #--------------------------------------
+cat > /etc/nginx/conf.d/realip.conf <<EOF
+#Local
+set_real_ip_from 127.0.0.1;
+set_real_ip_from 10.70.0.10;
+set_real_ip_from 0.0.0.0/0;
+
+# Header Config
+real_ip_header "X-Forwarded-For";
+EOF
+
+
+
 sudo bash -c 'cat > /etc/nginx/conf.d/001-wordpress.conf <<EOF
 server {
     listen 80;
