@@ -46,7 +46,7 @@ php-pdo_sqlite php-readline php-session php-sockets php-sqlite3 php-tokenizer ph
 php-xmlwriter php-xsl php-zip php-zlib php-mcrypt php-mysqlnd
 no "n" | sudo pecl install apcu
 sudo pecl install simdjson
-sudo dnf install -y sudo dnf install php-jsonlint.noarch php${Versao}-php-gd php${Versao}-php-zip php${Versao}-php-imagemagick php${Versao}-php-*
+sudo dnf install -y php-jsonlint.noarch php${Versao}-php-gd php${Versao}-php-zip php${Versao}-php-pecl-imagick-im7.x86_64
 echo "extension=apcu.so" | sudo tee /etc/php.d/40-apcu.ini
 
 sudo systemctl restart php-fpm
