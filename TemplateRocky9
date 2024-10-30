@@ -73,20 +73,26 @@ sudo dnf install -y php${Versao}-php-pecl-apcu
 sudo dnf install -y php${Versao}-php-pecl-simdjson
 sudo systemctl enable --now php83-php-fpm
 
+############################
+site="blog.skelt.com.br"
+site2="${site//./}"
+userapp=blogskelt
+############################
 
 cd /etc/opt/remi/php83/php-fpm.d
 
 
 ________________________________________________________
-[bandnewsfmcuritiba.com]
+cat > /etc/opt/remi/php83/php-fpm.d/${site} << EOF
+[${site}]
 ;cpu_affinity = 0 1 3
 prefix = /var/www/system/php
-user = bnfmcuritiba
-group = nginx
+user = ${userapp}
+group = apache
 
-listen = bandnewsfmcuritiba.com.sock
+listen = \$pool.sock
 listen.owner = root
-listen.group = nginx
+listen.group = apache
 listen.mode = 0660
 
 chdir = /
@@ -99,7 +105,7 @@ php_value[error_reporting] = 22519
 php_value[max_execution_time] = 90
 php_value[max_input_time] = 300
 php_value[max_execution_time] = 300
-php_value[open_basedir] = "/var/www/vhosts/bandnewsfmcuritiba.com/:/tmp/"
+php_value[open_basedir] = "/var/www/vhosts/\$pool/:/tmp/"
 php_value[post_max_size] = 70M
 php_value[upload_max_filesize] = 70M
 php_value[opcache.enable] = 1
@@ -115,6 +121,7 @@ pm.max_spare_servers = 30
 pm.min_spare_servers = 15
 pm.process_idle_timeout = 15s
 pm.start_servers = 15
+EOF
 _________________________________________________________________
 
 
