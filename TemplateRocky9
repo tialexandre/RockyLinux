@@ -83,7 +83,7 @@ cd /etc/opt/remi/php83/php-fpm.d
 
 
 ________________________________________________________
-cat > /etc/opt/remi/php83/php-fpm.d/${site} << EOF
+cat > /etc/opt/remi/php83/php-fpm.d/${site}.conf << EOF
 [${site}]
 ;cpu_affinity = 0 1 3
 prefix = /var/www/system/php
