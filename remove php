@@ -1,0 +1,6 @@
+sudo yum remove php* -y
+sudo rm -f /etc/php.ini
+sudo rm -rf /etc/php.d/
+sudo rm -rf /var/lib/php/sudo find / -name "*php*"
+
+
