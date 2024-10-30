@@ -1,0 +1,8 @@
+sudo systemctl stop httpd
+sudo systemctl disable httpd
+sudo yum remove httpd* -y
+sudo rm -rf /etc/httpd/
+sudo rm -rf /var/www/
+sudo rm -rf /var/log/httpd/
+sudo yum clean all
+
