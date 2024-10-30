@@ -380,7 +380,6 @@ server {
 	etag off;
 
 	location / {
-	        rewrite ^(/wp-content/uploads/)(.*)$ https://${site}/wp-content/uploads/$2 permanent;
 	        index  index.html index.htm index.php;
 	        try_files $uri $uri/ /index.php?$args;
 	}
@@ -435,7 +434,6 @@ server {
 	}
 
 	location / {
-	        rewrite ^(/wp-content/uploads/)(.*)$ https://${site}/wp-content/uploads/$2 permanent;
 	        index  index.html index.htm index.php;
 	        try_files $uri $uri/ /index.php?$args;
 	}
